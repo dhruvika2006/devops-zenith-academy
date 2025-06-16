@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -27,7 +26,7 @@ const Learn = () => {
   const [codeInput, setCodeInput] = useState('');
   const [quizAnswer, setQuizAnswer] = useState('');
 
-  // Mock course data
+  // Mock course data with actual video URLs
   const course = {
     id: courseId,
     title: 'Git & GitHub Fundamentals',
@@ -37,7 +36,7 @@ const Learn = () => {
         duration: '15 min',
         completed: true,
         content: 'Learn the basics of version control and why it\'s essential for modern development.',
-        videoUrl: '#',
+        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
         quiz: {
           question: 'What is the primary purpose of version control?',
           options: [
@@ -54,7 +53,7 @@ const Learn = () => {
         duration: '20 min',
         completed: true,
         content: 'Install Git and configure your development environment.',
-        videoUrl: '#',
+        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
         lab: {
           instruction: 'Configure your Git username and email',
           command: 'git config --global user.name "Your Name"\ngit config --global user.email "your.email@example.com"',
@@ -66,7 +65,7 @@ const Learn = () => {
         duration: '25 min',
         completed: false,
         content: 'Master the fundamental Git commands for daily development.',
-        videoUrl: '#',
+        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
         lab: {
           instruction: 'Initialize a new Git repository and make your first commit',
           command: 'git init\ngit add .\ngit commit -m "Initial commit"',
@@ -78,7 +77,7 @@ const Learn = () => {
         duration: '30 min',
         completed: false,
         content: 'Learn how to create branches and merge changes effectively.',
-        videoUrl: '#',
+        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
         quiz: {
           question: 'Which command creates a new branch and switches to it?',
           options: [
@@ -111,6 +110,10 @@ const Learn = () => {
   const handleRunCode = () => {
     // Simulate code execution
     console.log('Running code:', codeInput);
+  };
+
+  const handleVideoToggle = () => {
+    setIsPlaying(!isPlaying);
   };
 
   return (
@@ -222,21 +225,33 @@ const Learn = () => {
                 <div className="max-w-4xl mx-auto">
                   {/* Video Player */}
                   <div className="bg-slate-800 rounded-lg mb-6 overflow-hidden">
-                    <div className="aspect-video bg-slate-700 flex items-center justify-center">
-                      <div className="text-center">
-                        <Button
-                          size="lg"
-                          onClick={() => setIsPlaying(!isPlaying)}
-                          className="bg-blue-600 hover:bg-blue-700 rounded-full w-16 h-16"
+                    <div className="aspect-video bg-slate-700 relative">
+                      {isPlaying ? (
+                        <video
+                          src={currentModuleData.videoUrl}
+                          controls
+                          autoPlay
+                          className="w-full h-full"
+                          onPause={() => setIsPlaying(false)}
+                          onEnded={() => setIsPlaying(false)}
                         >
-                          {isPlaying ? (
-                            <Pause className="h-8 w-8" />
-                          ) : (
-                            <Play className="h-8 w-8 ml-1" />
-                          )}
-                        </Button>
-                        <p className="text-slate-400 mt-4">Video: {currentModuleData.title}</p>
-                      </div>
+                          Your browser does not support the video tag.
+                        </video>
+                      ) : (
+                        <div className="flex items-center justify-center h-full">
+                          <div className="text-center">
+                            <Button
+                              size="lg"
+                              onClick={handleVideoToggle}
+                              className="bg-blue-600 hover:bg-blue-700 rounded-full w-16 h-16"
+                            >
+                              <Play className="h-8 w-8 ml-1" />
+                            </Button>
+                            <p className="text-slate-400 mt-4">Video: {currentModuleData.title}</p>
+                            <p className="text-slate-500 text-sm mt-1">Click to play</p>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                   
