@@ -1,4 +1,3 @@
-
 import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
 import { Button } from '@/components/ui/button';
