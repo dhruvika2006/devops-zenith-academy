@@ -16,7 +16,8 @@ import {
   Zap,
   BookOpen,
   Play,
-  ArrowRight
+  ArrowRight,
+  Terminal
 } from 'lucide-react';
 
 const Index = () => {
