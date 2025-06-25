@@ -5,6 +5,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Heart, ShoppingBag, Search, Star, User } from "lucide-react";
 import { Link } from "react-router-dom";
+import { products } from "@/utils/productData";
+import { useWishlist } from "@/contexts/WishlistContext";
+import { useCart } from "@/contexts/CartContext";
 
 interface HomeProps {
   language: string;
@@ -12,6 +15,8 @@ interface HomeProps {
 
 const Home = ({ language }: HomeProps) => {
   const [searchQuery, setSearchQuery] = useState("");
+  const { addToWishlist, removeFromWishlist, isInWishlist, wishlistCount } = useWishlist();
+  const { addToCart, cartCount } = useCart();
 
   const translations = {
     english: {
@@ -66,41 +71,19 @@ const Home = ({ language }: HomeProps) => {
     { range: "51+ Years", image: "👵", color: "bg-red-100 text-red-600" }
   ];
 
-  const featuredProducts = [
-    {
-      id: 1,
-      name: "Elegant Pink Gown",
-      price: "₹2,999",
-      originalPrice: "₹3,999",
-      image: "/placeholder.svg",
-      rating: 4.8,
-      reviews: 124,
-      isNew: true,
-      isSale: true
-    },
-    {
-      id: 2,
-      name: "Traditional Silk Saree",
-      price: "₹5,499",
-      originalPrice: "₹6,999",
-      image: "/placeholder.svg",
-      rating: 4.9,
-      reviews: 89,
-      isNew: false,
-      isSale: true
-    },
-    {
-      id: 3,
-      name: "Casual Summer Dress",
-      price: "₹1,299",
-      originalPrice: "₹1,599",
-      image: "/placeholder.svg",
-      rating: 4.7,
-      reviews: 156,
-      isNew: true,
-      isSale: false
+  const featuredProducts = products.slice(0, 3);
+
+  const handleWishlistToggle = (product: any) => {
+    if (isInWishlist(product.id)) {
+      removeFromWishlist(product.id);
+    } else {
+      addToWishlist(product);
     }
-  ];
+  };
+
+  const handleAddToCart = (product: any) => {
+    addToCart(product, product.sizes[0], product.colors[0]);
+  };
 
   return (
     <div className="min-h-screen bg-fashion-gradient">
@@ -118,13 +101,23 @@ const Home = ({ language }: HomeProps) => {
             
             <div className="flex items-center space-x-4">
               <Link to="/wishlist">
-                <Button variant="ghost" size="icon" className="text-pink-600 hover:bg-pink-50">
+                <Button variant="ghost" size="icon" className="text-pink-600 hover:bg-pink-50 relative">
                   <Heart className="h-5 w-5" />
+                  {wishlistCount > 0 && (
+                    <Badge className="absolute -top-2 -right-2 bg-pink-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center p-0">
+                      {wishlistCount}
+                    </Badge>
+                  )}
                 </Button>
               </Link>
               <Link to="/cart">
-                <Button variant="ghost" size="icon" className="text-pink-600 hover:bg-pink-50">
+                <Button variant="ghost" size="icon" className="text-pink-600 hover:bg-pink-50 relative">
                   <ShoppingBag className="h-5 w-5" />
+                  {cartCount > 0 && (
+                    <Badge className="absolute -top-2 -right-2 bg-pink-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center p-0">
+                      {cartCount}
+                    </Badge>
+                  )}
                 </Button>
               </Link>
               <Link to="/profile">
@@ -201,9 +194,14 @@ const Home = ({ language }: HomeProps) => {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="absolute top-3 right-3 text-white hover:text-pink-500 hover:bg-white/80"
+                    onClick={() => handleWishlistToggle(product)}
+                    className={`absolute top-3 right-3 hover:bg-white/80 ${
+                      isInWishlist(product.id) 
+                        ? "text-pink-500" 
+                        : "text-white hover:text-pink-500"
+                    }`}
                   >
-                    <Heart className="h-5 w-5" />
+                    <Heart className={`h-5 w-5 ${isInWishlist(product.id) ? "fill-current" : ""}`} />
                   </Button>
                 </div>
                 
@@ -220,7 +218,11 @@ const Home = ({ language }: HomeProps) => {
                       <span className="text-lg font-semibold text-pink-600 font-montserrat">{product.price}</span>
                       <span className="text-sm text-gray-500 line-through font-montserrat">{product.originalPrice}</span>
                     </div>
-                    <Button size="sm" className="bg-pink-600 hover:bg-pink-700 font-montserrat">
+                    <Button 
+                      size="sm" 
+                      onClick={() => handleAddToCart(product)}
+                      className="bg-pink-600 hover:bg-pink-700 font-montserrat"
+                    >
                       <ShoppingBag className="h-4 w-4 mr-1" />
                       {t.addToCart}
                     </Button>

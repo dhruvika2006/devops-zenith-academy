@@ -14,6 +14,8 @@ import Wishlist from "./pages/Wishlist";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import LanguageSelector from "./components/LanguageSelector";
+import { WishlistProvider } from "./contexts/WishlistContext";
+import { CartProvider } from "./contexts/CartContext";
 
 const queryClient = new QueryClient();
 
@@ -50,20 +52,24 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Login language={language} />} />
-            <Route path="/home" element={<Home language={language} />} />
-            <Route path="/shop" element={<Shop language={language} />} />
-            <Route path="/product/:id" element={<ProductDetails language={language} />} />
-            <Route path="/cart" element={<Cart language={language} />} />
-            <Route path="/wishlist" element={<Wishlist language={language} />} />
-            <Route path="/profile" element={<Profile language={language} />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+        <WishlistProvider>
+          <CartProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Login language={language} />} />
+                <Route path="/home" element={<Home language={language} />} />
+                <Route path="/shop" element={<Shop language={language} />} />
+                <Route path="/product/:id" element={<ProductDetails language={language} />} />
+                <Route path="/cart" element={<Cart language={language} />} />
+                <Route path="/wishlist" element={<Wishlist language={language} />} />
+                <Route path="/profile" element={<Profile language={language} />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </CartProvider>
+        </WishlistProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );
