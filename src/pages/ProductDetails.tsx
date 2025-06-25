@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -21,9 +20,20 @@ const ProductDetails = ({ language }: ProductDetailsProps) => {
   const [selectedColor, setSelectedColor] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [showVR, setShowVR] = useState(false);
+  const [currentImage, setCurrentImage] = useState("");
 
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const { addToCart } = useCart();
+
+  // Initialize current image and selected color when product loads
+  useState(() => {
+    if (product) {
+      setCurrentImage(product.image);
+      if (product.colors.length > 0) {
+        setSelectedColor(product.colors[0]);
+      }
+    }
+  }, [product]);
 
   const translations = {
     english: {
@@ -46,7 +56,7 @@ const ProductDetails = ({ language }: ProductDetailsProps) => {
     },
     hindi: {
       backToShop: "शॉप पर वापस",
-      addToCart: "कार्ट में जोड़ें",
+      addToCart: "कार्त में जोड़ें",
       addToWishlist: "पसंदीदा में जोड़ें",
       removeFromWishlist: "पसंदीदा से हटाएं",
       selectSize: "साइज़ चुनें",
@@ -64,7 +74,7 @@ const ProductDetails = ({ language }: ProductDetailsProps) => {
     },
     marathi: {
       backToShop: "शॉपवर परत",
-      addToCart: "कार्टमध्ये जोडा",
+      addToCart: "कार्तमध्ये जोडा",
       addToWishlist: "आवडत्यांमध्ये जोडा",
       removeFromWishlist: "आवडत्यांमधून काढा",
       selectSize: "साइज निवडा",
@@ -115,6 +125,16 @@ const ProductDetails = ({ language }: ProductDetailsProps) => {
     }
   };
 
+  const handleColorSelection = (color: string) => {
+    setSelectedColor(color);
+    // Update image based on selected color
+    if (product.colorImages && product.colorImages[color]) {
+      setCurrentImage(product.colorImages[color]);
+    } else {
+      setCurrentImage(product.image);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-fashion-gradient">
       <div className="container mx-auto p-8">
@@ -132,9 +152,9 @@ const ProductDetails = ({ language }: ProductDetailsProps) => {
             <Card className="overflow-hidden bg-white border-0 shadow-lg">
               <div className="relative">
                 <img 
-                  src={product.image} 
+                  src={currentImage || product.image} 
                   alt={product.name}
-                  className="w-full h-96 lg:h-[600px] object-cover"
+                  className="w-full h-96 lg:h-[600px] object-cover transition-all duration-300"
                 />
                 <div className="absolute top-4 left-4 flex flex-col gap-2">
                   {product.isNew && (
@@ -197,6 +217,27 @@ const ProductDetails = ({ language }: ProductDetailsProps) => {
               </CardContent>
             </Card>
 
+            {/* Color Selection */}
+            <div>
+              <h3 className="text-lg font-montserrat font-semibold text-gray-800 mb-3">{t.selectColor}</h3>
+              <div className="flex flex-wrap gap-2">
+                {product.colors.map((color) => (
+                  <Button
+                    key={color}
+                    variant={selectedColor === color ? "default" : "outline"}
+                    onClick={() => handleColorSelection(color)}
+                    className={`font-montserrat ${
+                      selectedColor === color 
+                        ? 'bg-pink-600 text-white' 
+                        : 'hover:bg-pink-50 hover:border-pink-300'
+                    }`}
+                  >
+                    {color}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
             {/* Size Selection */}
             <div>
               <h3 className="text-lg font-montserrat font-semibold text-gray-800 mb-3">{t.selectSize}</h3>
@@ -206,26 +247,13 @@ const ProductDetails = ({ language }: ProductDetailsProps) => {
                     key={size}
                     variant={selectedSize === size ? "default" : "outline"}
                     onClick={() => setSelectedSize(size)}
-                    className="font-montserrat"
+                    className={`font-montserrat ${
+                      selectedSize === size 
+                        ? 'bg-pink-600 text-white' 
+                        : 'hover:bg-pink-50 hover:border-pink-300'
+                    }`}
                   >
                     {size}
-                  </Button>
-                ))}
-              </div>
-            </div>
-
-            {/* Color Selection */}
-            <div>
-              <h3 className="text-lg font-montserrat font-semibold text-gray-800 mb-3">{t.selectColor}</h3>
-              <div className="flex flex-wrap gap-2">
-                {product.colors.map((color) => (
-                  <Button
-                    key={color}
-                    variant={selectedColor === color ? "default" : "outline"}
-                    onClick={() => setSelectedColor(color)}
-                    className="font-montserrat"
-                  >
-                    {color}
                   </Button>
                 ))}
               </div>
