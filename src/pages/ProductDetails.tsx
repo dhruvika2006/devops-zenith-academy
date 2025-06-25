@@ -8,6 +8,7 @@ import { Heart, ShoppingBag, Star, ArrowLeft, Eye } from "lucide-react";
 import { products } from "@/utils/productData";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { useCart } from "@/contexts/CartContext";
+import VRTryOn from "@/components/VRTryOn";
 
 interface ProductDetailsProps {
   language: string;
@@ -19,6 +20,7 @@ const ProductDetails = ({ language }: ProductDetailsProps) => {
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
   const [quantity, setQuantity] = useState(1);
+  const [showVR, setShowVR] = useState(false);
 
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const { addToCart } = useCart();
@@ -146,7 +148,10 @@ const ProductDetails = ({ language }: ProductDetailsProps) => {
             </Card>
             
             {/* VR Try-On Button */}
-            <Button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 font-montserrat">
+            <Button 
+              onClick={() => setShowVR(true)}
+              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 font-montserrat"
+            >
               <Eye className="h-4 w-4 mr-2" />
               {t.vrTryOn}
             </Button>
@@ -269,6 +274,14 @@ const ProductDetails = ({ language }: ProductDetailsProps) => {
           </div>
         </div>
       </div>
+
+      {/* VR Try-On Modal */}
+      <VRTryOn 
+        product={product}
+        isOpen={showVR}
+        onClose={() => setShowVR(false)}
+        language={language}
+      />
     </div>
   );
 };
