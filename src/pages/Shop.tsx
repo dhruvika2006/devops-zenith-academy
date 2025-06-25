@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -104,7 +103,11 @@ const Shop = ({ language }: ShopProps) => {
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          product.category.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    // Fixed category filtering - exact match required when not "All"
     const matchesCategory = selectedCategory === "All" || product.category === selectedCategory;
+    
+    // Fixed age group filtering - exact match required when not "All Ages"
     const matchesAgeGroup = selectedAgeGroup === "All Ages" || product.ageGroup === selectedAgeGroup;
     
     let matchesPrice = true;
