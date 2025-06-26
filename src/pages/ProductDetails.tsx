@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -26,7 +26,7 @@ const ProductDetails = ({ language }: ProductDetailsProps) => {
   const { addToCart } = useCart();
 
   // Initialize current image and selected color when product loads
-  useState(() => {
+  useEffect(() => {
     if (product) {
       setCurrentImage(product.image);
       if (product.colors.length > 0) {
